@@ -3,25 +3,25 @@ import { useState } from "react";
 import Axios from "axios";
 
 export default function Body(){
-    const { register, handleSubmit, errors } = useForm();
+    const { register, handleSubmit, reset } = useForm();
+
    
-    const onSubmit = (datas) => {
-      
-        console.log(datas);
-        Axios.post(url,{
-            name:datas.name,
-            email:datas.email,
-            number:datas.number,
-            test:datas.test
+    const onSubmit = data => {
+        const apiUrl = "https://mint-forms.ieee-mint.org/api/form/addresponse?formld=task";
+        fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
         })
-        
-        .then(res=>{
-            console.log(res.datas);
-        })
-    };
+          .then(response => response.json())
+          .then(data => {
+           
+            reset(); // reset the form after submission
+          });
+      };
     
     const url = "https://mint-forms.ieee-mint.org/api/form/addresponse?formld=task"
-    const [datas,setDatas] = useState({
+    const [data,setDatas] = useState({
             name: "",
             email: "",
             number:"",
@@ -31,7 +31,7 @@ export default function Body(){
 
 
     function handle(e){
-        const newdata = {...datas}
+        const newdata = {...data}
         newdata[e.target.id] = e.target.value
         setDatas(newdata)
         console.log(newdata)
@@ -50,21 +50,21 @@ export default function Body(){
 
                     <div>
                         <label className="">Name</label><br/>
-                        <input onChange={(e)=>handle(e)} value={datas.id} type="text" id="name" className="border solid-black p-1 pl-3 rounded-lg w-80" placeholder="Your Name" {...register('name', { required: "Name is required" })}/>
+                        <input onChange={(e)=>handle(e)} value={data.id} type="text" id="name" className="border solid-black p-1 pl-3 rounded-lg w-80" placeholder="Your Name" {...register('name', { required: "Name is required" })}/>
                     </div>
                     
                     
                     <div>
                         <label className="">Email</label><br/>
-                        <input onChange={(e)=>handle(e)} value={datas.id} type="email" id="email" className="border solid-black p-1 pl-3 rounded-lg w-80" placeholder="you@company.com" {...register('email', { required: "email is required" })}/>
+                        <input onChange={(e)=>handle(e)} value={data.id} type="email" id="email" className="border solid-black p-1 pl-3 rounded-lg w-80" placeholder="you@company.com" {...register('email', { required: "email is required" })}/>
                     </div>
                     <div>
                         <label className="">Phone Number</label><br/>
-                        <input onChange={(e)=>handle(e)} value={datas.id} type="number" id="number" className="border solid-black p-1 pl-3 rounded-lg w-80" placeholder="+1(555) 000 0000" {...register('number', { required: "Phone number is required" })}/>
+                        <input onChange={(e)=>handle(e)} value={data.id} type="number" id="number" className="border solid-black p-1 pl-3 rounded-lg w-80" placeholder="+1(555) 000 0000" {...register('number', { required: "Phone number is required" })}/>
                     </div>
                     <div>
                         <label className="">How can we help?</label><br/>
-                        <textarea onChange={(e)=>handle(e)} value={datas.id} type="text" id="test" className="border solid-black p-1 pl-3 rounded-lg w-80 h-full" placeholder="Tell us a little about the project" {...register('test', { required: false })}/>
+                        <textarea onChange={(e)=>handle(e)} value={data.id} type="text" id="test" className="border solid-black p-1 pl-3 rounded-lg w-80 h-full" placeholder="Tell us a little about the project" {...register('test', { required: false })}/>
                     </div>
                     <span>Services</span>
                     <div className="grid grid-cols-2 p-5">
